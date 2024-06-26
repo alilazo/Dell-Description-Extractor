@@ -11,10 +11,18 @@ function extractSystemDescription() {
 
   if (systemDescriptionElement) {
       systemDescription = systemDescriptionElement.textContent.trim();
+      console.log('(ContentJS) Found System Description:', systemDescription);
+  } else {
+      console.log('(ContentJS) System Description Not Found');
   }
+
   if (expirationElement) {
     expirationDate = expirationElement.textContent.trim();
+    console.log('(ContentJS) Found Expiration Date:', expirationDate);
+  } else {
+    console.log('(ContentJS) Expiration Date Not Found');
   }
+
   const urlPath = window.location.pathname.split('/');
   const serialNumber = urlPath[urlPath.indexOf('servicetag') + 1];
 
@@ -41,15 +49,39 @@ function storeSystemDescription({ serialNumber, systemDescription, expirationDat
   });
 }
 
+// Function to wait for an element to be available
+async function waitForElement(selector, timeout = 10000, interval = 500) {
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < timeout) {
+    const element = document.querySelector(selector);
+    if (element) {
+      console.log(`(ContentJS) Found element ${selector}`);
+      return element;
+    }
+    await sleep(interval);
+  }
+
+  throw new Error(`Timeout waiting for element: ${selector}`);
+}
+
 // Main function to run when the DOM is ready
-function main() {
+async function main() {
+
+  // Wait for the SystemDescription and Warranty Expiration elements to be available
+  try {
+    await waitForElement('h1[aria-label="SystemDescription"]');
+    await waitForElement('p.warrantyExpiringLabel.mb-0.ml-1.mr-1');
+  } catch (error) {
+    console.log('Error: ', error);
+  }
+
   const { serialNumber, systemDescription, expirationDate } = extractSystemDescription();
   if (systemDescription !== "System Description Not Found") {
       chrome.storage.local.get({ showConfirmation: true }, async function(data) {
           if (data.showConfirmation) {
               const saveDescription = confirm(`Do you want to save the following description to DDDE?\n\n${systemDescription}`);
               if (saveDescription) {
-                  
                   storeSystemDescription({ serialNumber, systemDescription, expirationDate });
                   navigator.clipboard.writeText(systemDescription)
               } else {

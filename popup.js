@@ -29,11 +29,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (count > 0) {
             modelsListLabel.innerHTML = `<h2>(${count}) Dell System Descriptions:</h2><ul>`;
             htmlContent += '<ul>';
-            descriptions.forEach(function ({ serialNumber, systemDescription }, index) {
+            descriptions.forEach(function ({ serialNumber, systemDescription, expirationDate }, index) {
+                let styledExpirationDate = expirationDate;
+                if (expirationDate.includes('Expired')) {
+                    styledExpirationDate = expirationDate.replace('Expired', '<span style="color: lightcoral;">Expired</span>');
+                }
                 htmlContent += `
                     <li>
-                        <span class="copyText" data-text="${serialNumber}">${serialNumber}</span> - 
-                        <span class="copyText" data-text="${systemDescription}">${systemDescription}</span> 
+                        <span class="copyText" data-text="${serialNumber}" style="text-align: center">${serialNumber}</span> - 
+                        <span class="copyText" data-text="${systemDescription}" style="text-align: center">${systemDescription}</span> - 
+                        <span class="copyText" data-text="${expirationDate}" style="text-align: center">${styledExpirationDate}</span>
                         <button class="deleteButton" data-index="${index}">X</button>
                     </li>`;
             });
@@ -110,9 +115,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Function to export descriptions to CSV
     function exportToCSV(descriptions) {
-        let csvContent = "data:text/csv;charset=utf-8,Serial Number,System Description\n";
-        descriptions.forEach(function ({ serialNumber, systemDescription }) {
-            csvContent += `${serialNumber},${systemDescription}\n`;
+        let csvContent = "data:text/csv;charset=utf-8,Serial Number,System Description,Expiration Date\n";
+        descriptions.forEach(function ({ serialNumber, systemDescription, expirationDate }) {
+            csvContent += `${serialNumber},${systemDescription},${expirationDate}\n`;
         });
 
         const encodedUri = encodeURI(csvContent);

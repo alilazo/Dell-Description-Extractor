@@ -18,8 +18,6 @@ async function processNextSerialNumber() {
             // Reuse the current tab to navigate to the next URL
             chrome.tabs.update(tabs[0].id, { url: url });
         });
-    } else {
-        alert('Processing completed.');
     }
 }
 
