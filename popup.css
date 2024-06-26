@@ -1,0 +1,226 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    color: #333;
+    width: 300px;
+}
+
+h1 {
+    font-size: 1.5em;
+    color: #0078d4;
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    margin: 5px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+button:hover {
+    background-color: #005a9e;
+}
+
+#modelsList {
+    margin-top: 20px;
+    max-height: 250px; /* Approximate height for 4 rows */
+    overflow-y: auto;
+}
+
+#modelsList ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#modelsList li {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#modelsList .deleteButton {
+    background-color: #d9534f;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#modelsList .deleteButton:hover {
+    background-color: #c9302c;
+}
+
+.buttonContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.createFolderOptionsButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+}
+
+.createFolderOptionsButtonContainer.createFolderOptionsButtonContainer button:not(:last-child) {
+    margin-right: 10px;
+}
+
+.buttonContainer.folderPopupButtons {
+    width: 100%;
+}
+
+.buttonContainer.createFolderButtons {
+    width: 100%;
+}
+
+.bottomContainer {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.copyText {
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+.copyText.clicked {
+    opacity: 0.3;
+}
+
+.copyText::after {
+    content: 'Copied!';
+    position: absolute;
+    top: 0px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    z-index: 1;
+}
+.copyText.clicked::after {
+    opacity: 1;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 20px;
+}
+
+.popup.folderPopup {
+    width: 75%;
+}
+
+.popup.createFolderPopup {
+    width: 50%;
+
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.popup-content h2 {
+    margin-top: 0;
+}
+
+.popup-content button {
+    margin-top: 10px;
+}
+
+.popup-content #folderList {
+    max-height: 200px;
+    overflow-y: auto;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.popup-content #folderList div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.popup-content #folderList div:hover {
+    background-color: #f1f1f1;
+}
+
+.folderItem button.deleteFolderButton {
+    background-color: #d9534f;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.folderItem button.deleteFolderButton:hover {
+    background-color: #c9302c;
+}
+
+#currentFolderName {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+}

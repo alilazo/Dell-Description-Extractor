@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dell System Description Extractor</title>
+  <link rel="stylesheet" href="popup.css">
+  <script src="popup.js"></script>
+</head>
+<body>
+    <h1>Dell System Description Extractor</h1>
+    <form id="searchForm">
+        <label for="serialNumberInput">Enter Serial Number:</label><br>
+        <input type="text" id="serialNumberInput" name="serialNumberInput" required>
+        <div class="buttonContainer">
+            <button type="submit">Search</button>
+            <button type="button" id="openFolderButton">Open Folder</button>
+        </div>
+    </form>
+    <div id="currentFolderName"></div> <!-- Add a div to display the current folder name -->
+    <div id="modelsListLabel"></div>
+    <div id="modelsList"></div>
+    <div class="buttonContainer">
+        <button id="clearButton">Clear All Devices</button> <!-- Add a button to clear all devices -->
+        <button id="exportButton">Export to CSV</button> <!-- New button for exporting to CSV -->
+    </div>
+    <div class="bottomContainer">
+        <label>
+            <input style="margin-left: 0;" type="checkbox" id="confirmationCheckbox" checked />
+            Show Confirmation Prompt
+        </label>
+        <label>
+            <input style="margin-left: 0;" type="checkbox" id="autoClipboardCheckbox" checked />
+            Auto Copy Device Model to Clipboard
+        </label>
+    </div>
+
+    <!-- Folder Popup -->
+    <div id="folderPopup" class="popup folderPopup">
+        <div class="popup-content">
+            <h4>Select or Create a Folder</h4>
+            <div id="folderList"></div>
+            <div class="buttonContainer folderPopupButtons">
+                <button id="createFolderButton">Create Folder</button>
+                <button id="closeFolderPopup">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Folder Popup -->
+    <div id="createFolderPopup" class="popup createFolderPopup">
+        <div class="popup-content">
+            <h4>Create a New Folder</h4>
+            <input type="text" id="newFolderName" placeholder="Folder Name" />
+            <div class="buttonContainer createFolderButtons">
+                <button id="createFolderConfirmButton">Create</button>
+                <button id="closeCreateFolderPopup">Close</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

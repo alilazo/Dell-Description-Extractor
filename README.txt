@@ -1,0 +1,3 @@
+- Copy and Past this link in Edge: edge://extensions/
+- click "Load unpacked"
+- Select the "Dell Description Extractor" folder

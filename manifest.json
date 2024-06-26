@@ -1,0 +1,25 @@
+{
+    "name": "Dell Device Description Extractor",
+    "version": "0.0.0.1",
+    "manifest_version": 3,
+    "description": "An extension to extract dell device models.",
+    "permissions": ["scripting", "activeTab", "storage", "tabs"],
+    "host_permissions": [
+        "https://www.dell.com/*"
+    ],
+    "icons": {
+        "48": "icons/Logo.png"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+    {
+        "matches": ["https://www.dell.com/*"],
+        "js": ["content.js"]
+    }
+    ]
+}
