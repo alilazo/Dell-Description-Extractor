@@ -1,14 +1,20 @@
 document.addEventListener('DOMContentLoaded', function () {
+    const serialNumberInput = document.getElementById('serialNumberInput');
     const confirmationCheckbox = document.getElementById('confirmationCheckbox');
+    const autoClipboardCheckbox = document.getElementById('autoClipboardCheckbox');
 
     // Load the saved checkbox state
-    chrome.storage.local.get({ showConfirmation: true }, function(data) {
+    chrome.storage.local.get({ showConfirmation: true, autoCopy: true }, function(data) {
         confirmationCheckbox.checked = data.showConfirmation;
+        autoClipboardCheckbox.checked = data.autoCopy;
     });
 
     // Save the checkbox state when it changes
     confirmationCheckbox.addEventListener('change', function() {
         chrome.storage.local.set({ showConfirmation: confirmationCheckbox.checked });
+    });
+    autoClipboardCheckbox.addEventListener('change', function() {
+        chrome.storage.local.set({ autoCopy: autoClipboardCheckbox.checked });
     });
 
     // Add event listener to the form submission
@@ -103,12 +109,14 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.storage.local.get(['systemDescriptions', 'currentFolder'], function (data) {
             const folderName = data.currentFolder || 'Default';
             if (data.systemDescriptions && data.systemDescriptions[folderName]) {
-                data.systemDescriptions[folderName] = [];
-                chrome.storage.local.set({ systemDescriptions: data.systemDescriptions }, function () {
-                    document.getElementById('modelsList').innerHTML = '<p>No Dell system descriptions saved.</p>';
-                    refreshDeviceList();
-                    alert('Cleared All Devices in list');
-                });
+                if (confirm(`Are you sure you want to clear all devices in the folder "${folderName}"?`)) {
+                    data.systemDescriptions[folderName] = [];
+                    chrome.storage.local.set({ systemDescriptions: data.systemDescriptions }, function () {
+                        document.getElementById('modelsList').innerHTML = '<p>No Dell system descriptions saved.</p>';
+                        refreshDeviceList();
+                        alert('Cleared All Devices in list');
+                    });
+                }
             }
         });
     });
@@ -142,16 +150,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Function to import CSV and start web parsing
-    function importCSVAndParse(file) {
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const csvData = event.target.result;
-            const serialNumbers = csvData.split('\n').slice(1).map(line => line.trim()).filter(line => line);
-            chrome.runtime.sendMessage({ type: 'START_PROCESS', serialNumbers: serialNumbers });
-        };
-        reader.readAsText(file);
-    }
+    // Function to import CSV and start parsing
+    // function importCSVAndParse(file) {
+    //     const reader = new FileReader();
+    //     reader.onload = function (event) {
+    //         const csvData = event.target.result;
+    //         const serialNumbers = csvData.split('\n').slice(1).map(line => line.trim()).filter(line => line);
+    //         chrome.runtime.sendMessage({ type: 'START_PROCESS', serialNumbers: serialNumbers });
+    //     };
+    //     reader.readAsText(file);
+    // }
 
     // Add event listener to the file input
     // document.getElementById('fileInput').addEventListener('change', function (event) {
@@ -176,6 +184,13 @@ document.addEventListener('DOMContentLoaded', function () {
     function loadFolders() {
         chrome.storage.local.get({ folders: [] }, function(data) {
             folderList.innerHTML = '';
+            if (data.folders.length === 0) {
+                serialNumberInput.disabled = true;
+                serialNumberInput.placeholder = "Please create a folder";
+            } else {
+                serialNumberInput.disabled = false;
+                serialNumberInput.placeholder = "Enter Serial Number";
+            }
             data.folders.forEach(function(folder, index) {
                 const folderItem = document.createElement('div');
                 folderItem.className = 'folderItem';
@@ -252,11 +267,23 @@ document.addEventListener('DOMContentLoaded', function () {
     folderList.addEventListener('click', function (event) {
         if (event.target.classList.contains('deleteFolderButton')) {
             const index = parseInt(event.target.getAttribute('data-index'));
-            chrome.storage.local.get({ folders: [] }, function(data) {
-                const updatedFolders = data.folders.filter((folder, i) => i !== index);
-                chrome.storage.local.set({ folders: updatedFolders }, function() {
-                    loadFolders();
-                });
+            chrome.storage.local.get({ folders: [], systemDescriptions: {} }, function(data) {
+                const folders = data.folders;
+                const folderName = folders[index];
+                if (confirm(`Are you sure you want to delete the folder "${folderName}" and all its devices?`)) {
+                    folders.splice(index, 1);
+                    delete data.systemDescriptions[folderName]; // Remove the folder and its devices from systemDescriptions
+                    chrome.storage.local.set({ folders: folders, systemDescriptions: data.systemDescriptions }, function() {
+                        loadFolders();
+                        if (data.currentFolder === folderName) {
+                            const nextFolder = folders.length > 0 ? folders[0] : 'Default';
+                            chrome.storage.local.set({ currentFolder: nextFolder }, function() {
+                                currentFolderNameDisplay.textContent = `Current Folder: ${nextFolder}`;
+                                refreshDeviceList();
+                            });
+                        }
+                    });
+                }
             });
         }
     });
